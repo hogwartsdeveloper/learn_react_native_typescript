@@ -1,5 +1,6 @@
+import firebase from "firebase";
 import { FC, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Input, Button } from "../components";
 
 const SignUp: FC = (props) => {
@@ -7,13 +8,28 @@ const SignUp: FC = (props) => {
     const [email, setEmail] = useState<string | null>(null);
     const [password, setPassword] = useState<string | null>(null);
 
+    const signUp = async () => {
+        if(name && email && password) {
+            try {
+                const user = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                if (user) {
+                    Alert.alert(JSON.stringify(user));
+                }
+            } catch(e) {
+                console.log(e)
+            }
+        } else {
+            Alert.alert(`Error`, `Missing Fields`)
+        }
+    }
+
     return (
         <View style={styles.container}>
             <Text>Sign Up Screen</Text>
             <Input placeholder="Name" onChangeText={(text) => setName(text)} />
             <Input placeholder="Email" onChangeText={(text) => setEmail(text)} />
             <Input placeholder="password" onChangeText={(text) => setPassword(text)} secureTextEntry/>
-            <Button title="Sign Up" onPress={() => alert('Presed')}/>
+            <Button title="Sign Up" onPress={signUp}/>
             <View style={styles.loginText}>
                 <Text style={{marginHorizontal: 5}}>Already Have an Account?</Text>
                 <TouchableOpacity 
