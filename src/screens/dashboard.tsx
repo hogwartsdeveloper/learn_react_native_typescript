@@ -2,22 +2,25 @@ import firebase from "firebase";
 import { FC, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import { ApprovalRender } from "../components";
+import { ApprovalRender, Button } from "../components";
 
-const Dashboard: FC = () => {
+const Dashboard: FC = (props) => {
     const [posts, setPosts] = useState<any>(null);
 
     const fetchPendingPosts = async () => {
-        const posts = await firebase.firestore().collection('posts').where('approved', '==', false).get();
-        setPosts([...posts.docs])
+        firebase.firestore().collection('posts').where('approved', '==', false).onSnapshot(querySnapshot => {
+            const documents = querySnapshot.docs;
+            setPosts(documents)
+        })
     }
 
-    const onApprove = (id: string) => {
-        alert(`Item of ID ${id} will be approved`)
+    const onApprove = async (id: string) => {
+        const post = await firebase.firestore().collection('posts').doc(id).get();
+        post.ref.set({approved: true}, {merge: true});
     }
 
-    const onReject = (id: string) => {
-        alert(`Item of ID ${id} will be approved`)
+    const onReject = async (id: string) => {
+        await firebase.firestore().collection('posts').doc(id).delete();
     }
 
     useEffect(() => {
@@ -26,6 +29,7 @@ const Dashboard: FC = () => {
 
     return (
         <View style={styles.container}>
+            <Button title="Back" onPress={() => props.navigation.goBack()} />
             <Text>Dashboard Screen</Text>
             <View style={{height: '50%'}}>
                 <FlatList 
