@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Input } from "../components";
+import { Input, Button } from "../components";
 
 const SignUp: FC = () => {
     const [name, setName] = useState<string | null>(null);
@@ -13,6 +13,7 @@ const SignUp: FC = () => {
             <Input placeholder="Name" onChangeText={(text) => setName(text)} />
             <Input placeholder="Email" onChangeText={(text) => setEmail(text)} />
             <Input placeholder="password" onChangeText={(text) => setPassword(text)} secureTextEntry/>
+            <Button title="Sign Up" onPress={() => alert('Presed')}/>
         </View>
     )
 }
